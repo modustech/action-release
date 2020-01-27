@@ -63,7 +63,7 @@ export class Committer {
         return content
     }
 
-    updateChart(chart: Chart) {
+    updateChart(chart: Chart): void {
         const svc = chart.dependencies.find(c => c.name === this.service)
         if (!svc) {
             const msg = `Service ${this.service} not found in chart dependencies`
