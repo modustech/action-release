@@ -63,7 +63,7 @@ export class Committer {
         return content
     }
 
-    async updateChart(chart: Chart): Promise<void> {
+    updateChart(chart: Chart) {
         const svc = chart.dependencies.find(c => c.name === this.service)
         if (!svc) {
             const msg = `Service ${this.service} not found in chart dependencies`
@@ -154,7 +154,7 @@ export class Committer {
     async release(): Promise<void> {
         let content = await this.getChartYaml()
         const chart = yaml.safeLoad(content)
-        await this.updateChart(chart)
+        this.updateChart(chart)
         content = yaml.safeDump(chart)
         await this.commitChange(content)
     }

@@ -8,7 +8,7 @@ inputs:
   repo:
     description: 'the name of the github repo'
     required: true
-  environment:              # change this
+  environment:
     description: 'the name of environment to release (staging or production)'
     required: true
   service:
