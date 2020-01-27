@@ -1,0 +1,22 @@
+name: 'Deploy Service'
+description: 'Make a commit to environment repo and release a microservice via Helm'
+author: 'Modus Technologies'
+inputs:
+  owner:
+    description: 'the owner of the github repo, organization or account name'
+    required: true
+  repo:
+    description: 'the name of the github repo'
+    required: true
+  environment:              # change this
+    description: 'the name of environment to release (staging or production)'
+    required: true
+  service:
+    description: 'the name the service'
+    required: true
+  version:
+    description: 'the version of the service to release'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
