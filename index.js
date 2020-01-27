@@ -4,6 +4,7 @@ let baseTree;
 let parentCommit;
 
 const headers = { 
+    // TODO: configure this.
     authorization: `token 34ddc57bfc23f4d926007e448de17b242d8c54a7`,
     accept: 'application/vnd.github.v3+json',
     'User-Agent': 'release action' 
