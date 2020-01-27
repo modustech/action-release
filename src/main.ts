@@ -15,6 +15,10 @@ async function run(): Promise<void> {
         core.debug(`version: ${version}`)
         const token: string = core.getInput('token')
         core.debug(`version: ${token}`)
+        const authorName: string = core.getInput('author-name')
+        core.debug(`author-name: ${authorName}`)
+        const authorEmail: string = core.getInput('author-email')
+        core.debug(`version: ${authorEmail}`)
 
         await new Committer(
             owner,
@@ -22,7 +26,9 @@ async function run(): Promise<void> {
             environment,
             service,
             version,
-            token
+            token,
+            authorName,
+            authorEmail
         ).release()
         core.info('committed to environment repo successfully.')
     } catch (error) {

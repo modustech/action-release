@@ -5807,7 +5807,11 @@ function run() {
             core.debug(`version: ${version}`);
             const token = core.getInput('token');
             core.debug(`version: ${token}`);
-            yield new rel_1.Committer(owner, repo, environment, service, version, token).release();
+            const authorName = core.getInput('author-name');
+            core.debug(`author-name: ${authorName}`);
+            const authorEmail = core.getInput('author-email');
+            core.debug(`version: ${authorEmail}`);
+            yield new rel_1.Committer(owner, repo, environment, service, version, token, authorName, authorEmail).release();
             core.info('committed to environment repo successfully.');
         }
         catch (error) {
@@ -42131,13 +42135,15 @@ const request_promise_1 = __webpack_require__(99);
 const yaml = __importStar(__webpack_require__(186));
 const core = __importStar(__webpack_require__(470));
 class Committer {
-    constructor(owner, repo, branch, service, version, token) {
+    constructor(owner, repo, branch, service, version, token, authorName, authorEmail) {
         this.owner = owner;
         this.repo = repo;
         this.branch = branch;
         this.service = service;
         this.version = version;
         this.token = token;
+        this.authorName = authorName;
+        this.authorEmail = authorEmail;
         this.baseTree = '';
         this.parentCommit = '';
         this.headers = {
@@ -42179,19 +42185,17 @@ class Committer {
         });
     }
     updateChart(chart) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const svc = chart.dependencies.find(c => c.name === this.service);
-            if (!svc) {
-                const msg = `Service ${this.service} not found in chart dependencies`;
-                throw new Error(msg);
-            }
-            const oldVersion = svc.version;
-            if (oldVersion === this.version) {
-                core.info(`version ${this.version} is the same as the current version`);
-                return;
-            }
-            svc.version = this.version;
-        });
+        const svc = chart.dependencies.find(c => c.name === this.service);
+        if (!svc) {
+            const msg = `Service ${this.service} not found in chart dependencies`;
+            throw new Error(msg);
+        }
+        const oldVersion = svc.version;
+        if (oldVersion === this.version) {
+            core.info(`version ${this.version} is the same as the current version`);
+            return;
+        }
+        svc.version = this.version;
     }
     commitChange(content) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42236,8 +42240,8 @@ class Committer {
             body = {
                 message: `Release service ${this.service} version ${this.version}`,
                 author: {
-                    name: 'Modus CI',
-                    email: 'dev@modusclosing.com',
+                    name: this.authorName,
+                    email: this.authorEmail,
                     date: new Date().toISOString()
                 },
                 parents: [this.parentCommit],
@@ -42267,7 +42271,7 @@ class Committer {
         return __awaiter(this, void 0, void 0, function* () {
             let content = yield this.getChartYaml();
             const chart = yaml.safeLoad(content);
-            yield this.updateChart(chart);
+            this.updateChart(chart);
             content = yaml.safeDump(chart);
             yield this.commitChange(content);
         });

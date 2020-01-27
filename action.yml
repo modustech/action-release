@@ -17,6 +17,12 @@ inputs:
   version:
     description: 'the version of the service to release'
     required: true
+  author-name:
+    description: 'the name of the author who commit the change, this is generally the name of CI account'
+    required: true
+  author-email:
+    description: 'the email of the author who commit the change, this is generally the name of CI account'
+    required: true
 runs:
   using: 'node12'
   main: 'dist/index.js'

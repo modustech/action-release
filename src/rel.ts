@@ -26,7 +26,9 @@ export class Committer {
         private readonly branch: string,
         private readonly service: string,
         private readonly version: string,
-        private readonly token: string
+        private readonly token: string,
+        private readonly authorName: string,
+        private readonly authorEmail: string
     ) {
         this.headers.authorization = `token ${token}`
     }
@@ -123,8 +125,8 @@ export class Committer {
         body = {
             message: `Release service ${this.service} version ${this.version}`,
             author: {
-                name: 'Modus CI',
-                email: 'dev@modusclosing.com',
+                name: this.authorName,
+                email: this.authorEmail,
                 date: new Date().toISOString()
             },
             parents: [this.parentCommit],
