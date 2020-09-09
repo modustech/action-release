@@ -23404,7 +23404,7 @@ module.exports = schedule;
 /* 477 */
 /***/ (function(module) {
 
-module.exports = {"_from":"tough-cookie@~2.4.3","_id":"tough-cookie@2.4.3","_inBundle":false,"_integrity":"sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==","_location":"/request/tough-cookie","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"tough-cookie@~2.4.3","name":"tough-cookie","escapedName":"tough-cookie","rawSpec":"~2.4.3","saveSpec":null,"fetchSpec":"~2.4.3"},"_requiredBy":["/request"],"_resolved":"https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz","_shasum":"53f36da3f47783b0925afa06ff9f3b165280f781","_spec":"tough-cookie@~2.4.3","_where":"/Users/yunfeizuo/src/gi/node_modules/request","author":{"name":"Jeremy Stashewsky","email":"jstash@gmail.com"},"bugs":{"url":"https://github.com/salesforce/tough-cookie/issues"},"bundleDependencies":false,"contributors":[{"name":"Alexander Savin"},{"name":"Ian Livingstone"},{"name":"Ivan Nikulin"},{"name":"Lalit Kapoor"},{"name":"Sam Thompson"},{"name":"Sebastian Mayr"}],"dependencies":{"psl":"^1.1.24","punycode":"^1.4.1"},"deprecated":false,"description":"RFC6265 Cookies and Cookie Jar for node.js","devDependencies":{"async":"^1.4.2","nyc":"^11.6.0","string.prototype.repeat":"^0.2.0","vows":"^0.8.1"},"engines":{"node":">=0.8"},"files":["lib"],"homepage":"https://github.com/salesforce/tough-cookie","keywords":["HTTP","cookie","cookies","set-cookie","cookiejar","jar","RFC6265","RFC2965"],"license":"BSD-3-Clause","main":"./lib/cookie","name":"tough-cookie","repository":{"type":"git","url":"git://github.com/salesforce/tough-cookie.git"},"scripts":{"cover":"nyc --reporter=lcov --reporter=html vows test/*_test.js","test":"vows test/*_test.js"},"version":"2.4.3"};
+module.exports = {"_args":[["tough-cookie@2.4.3","/Users/yunfeizuo/src/action-release"]],"_from":"tough-cookie@2.4.3","_id":"tough-cookie@2.4.3","_inBundle":false,"_integrity":"sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==","_location":"/request/tough-cookie","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"tough-cookie@2.4.3","name":"tough-cookie","escapedName":"tough-cookie","rawSpec":"2.4.3","saveSpec":null,"fetchSpec":"2.4.3"},"_requiredBy":["/request"],"_resolved":"https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.4.3.tgz","_spec":"2.4.3","_where":"/Users/yunfeizuo/src/action-release","author":{"name":"Jeremy Stashewsky","email":"jstash@gmail.com"},"bugs":{"url":"https://github.com/salesforce/tough-cookie/issues"},"contributors":[{"name":"Alexander Savin"},{"name":"Ian Livingstone"},{"name":"Ivan Nikulin"},{"name":"Lalit Kapoor"},{"name":"Sam Thompson"},{"name":"Sebastian Mayr"}],"dependencies":{"psl":"^1.1.24","punycode":"^1.4.1"},"description":"RFC6265 Cookies and Cookie Jar for node.js","devDependencies":{"async":"^1.4.2","nyc":"^11.6.0","string.prototype.repeat":"^0.2.0","vows":"^0.8.1"},"engines":{"node":">=0.8"},"files":["lib"],"homepage":"https://github.com/salesforce/tough-cookie","keywords":["HTTP","cookie","cookies","set-cookie","cookiejar","jar","RFC6265","RFC2965"],"license":"BSD-3-Clause","main":"./lib/cookie","name":"tough-cookie","repository":{"type":"git","url":"git://github.com/salesforce/tough-cookie.git"},"scripts":{"cover":"nyc --reporter=lcov --reporter=html vows test/*_test.js","test":"vows test/*_test.js"},"version":"2.4.3"};
 
 /***/ }),
 /* 478 */,
@@ -42153,7 +42153,7 @@ class Committer {
         };
         this.headers.authorization = `token ${token}`;
     }
-    getChartYaml() {
+    getYaml(yamlFileName) {
         return __awaiter(this, void 0, void 0, function* () {
             // get ref
             let res = yield request_promise_1.get({
@@ -42176,7 +42176,7 @@ class Committer {
             url = file.url;
             core.debug(url);
             res = yield request_promise_1.get({ url, headers: this.headers, json: true });
-            file = res.tree.find((v) => v.path === 'Chart.yaml');
+            file = res.tree.find((v) => v.path === yamlFileName);
             url = file.url;
             core.debug(url);
             res = yield request_promise_1.get({ url, headers: this.headers, json: true });
@@ -42184,8 +42184,8 @@ class Committer {
             return content;
         });
     }
-    updateChart(chart) {
-        const svc = chart.dependencies.find(c => c.name === this.service);
+    updateVersion(values) {
+        const svc = values.services[this.service];
         if (!svc) {
             const msg = `Service ${this.service} not found in chart dependencies`;
             throw new Error(msg);
@@ -42223,7 +42223,7 @@ class Committer {
                 base_tree: this.baseTree,
                 tree: [
                     {
-                        path: 'environment/Chart.yaml',
+                        path: 'environment/values.yaml',
                         mode: '100644',
                         type: 'blob',
                         sha: blobSha
@@ -42269,10 +42269,10 @@ class Committer {
     }
     release() {
         return __awaiter(this, void 0, void 0, function* () {
-            let content = yield this.getChartYaml();
-            const chart = yaml.safeLoad(content);
-            this.updateChart(chart);
-            content = yaml.safeDump(chart);
+            let content = yield this.getYaml('values.yaml');
+            const values = yaml.safeLoad(content);
+            this.updateVersion(values);
+            content = yaml.safeDump(values);
             yield this.commitChange(content);
         });
     }
