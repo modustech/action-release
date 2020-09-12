@@ -2,13 +2,16 @@ import {get, post, patch} from 'request-promise'
 import * as yaml from 'js-yaml'
 import * as core from '@actions/core'
 
-interface Chart {
-    dependencies: Dependency[]
+interface Service {
+    version: string
 }
 
-interface Dependency {
-    name: string
-    version: string
+interface Services {
+    [name: string]: Service
+}
+
+interface Values {
+    services: Services
 }
 
 export class Committer {
@@ -33,7 +36,7 @@ export class Committer {
         this.headers.authorization = `token ${token}`
     }
 
-    async getChartYaml(): Promise<string> {
+    async getYaml(yamlFileName: string): Promise<string> {
         // get ref
         let res = await get({
             uri: `https://api.github.com/repos/${this.owner}/${this.repo}/git/refs/heads/${this.branch}`,
@@ -57,7 +60,7 @@ export class Committer {
         url = file.url
         core.debug(url)
         res = await get({url, headers: this.headers, json: true})
-        file = res.tree.find((v: any) => v.path === 'Chart.yaml')
+        file = res.tree.find((v: any) => v.path === yamlFileName)
         url = file.url
         core.debug(url)
         res = await get({url, headers: this.headers, json: true})
@@ -65,8 +68,8 @@ export class Committer {
         return content
     }
 
-    updateChart(chart: Chart): void {
-        const svc = chart.dependencies.find(c => c.name === this.service)
+    updateVersion(values: Values): void {
+        const svc = values.services[this.service]
         if (!svc) {
             const msg = `Service ${this.service} not found in chart dependencies`
             throw new Error(msg)
@@ -107,7 +110,7 @@ export class Committer {
             base_tree: this.baseTree,
             tree: [
                 {
-                    path: 'environment/Chart.yaml',
+                    path: 'environment/values.yaml',
                     mode: '100644',
                     type: 'blob',
                     sha: blobSha
@@ -154,10 +157,10 @@ export class Committer {
     }
 
     async release(): Promise<void> {
-        let content = await this.getChartYaml()
-        const chart = yaml.safeLoad(content)
-        this.updateChart(chart)
-        content = yaml.safeDump(chart)
+        let content = await this.getYaml('values.yaml')
+        const values = yaml.safeLoad(content)
+        this.updateVersion(values)
+        content = yaml.safeDump(values)
         await this.commitChange(content)
     }
 }
