@@ -21,25 +21,22 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@types/js-yaml": "^3.12.2",
-    "@types/request-promise": "^4.1.45",
-    "js-yaml": "^3.13.1",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.5"
+    "got": "^11.8.2",
+    "js-yaml": "^3.13.1"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.23",
-    "@types/node": "^12.7.12",
+    "@types/js-yaml": "^3.12.6",
+    "@types/jest": "^26.0.23",
+    "@types/node": "^12.20.11",
     "@typescript-eslint/parser": "^2.8.0",
     "@zeit/ncc": "^0.20.5",
     "eslint": "^5.16.0",
     "eslint-plugin-github": "^2.0.0",
     "eslint-plugin-jest": "^22.21.0",
-    "jest": "^24.9.0",
-    "jest-circus": "^24.9.0",
-    "js-yaml": "^3.13.1",
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
     "prettier": "^1.19.1",
-    "ts-jest": "^24.2.0",
-    "typescript": "^3.7.5"
+    "ts-jest": "^26.5.5",
+    "typescript": "^3.9.9"
   }
 }
