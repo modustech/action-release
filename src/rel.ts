@@ -30,7 +30,7 @@ export class Committer {
         private readonly authorName: string,
         private readonly authorEmail: string
     ) {
-        this.headers.authorization = `token ${token}`
+        this.headers.authorization = `token ${this.token}`
     }
 
     async getChartYaml(): Promise<string> {
