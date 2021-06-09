@@ -23,9 +23,10 @@
     "@actions/core": "^1.4.0",
     "@types/js-yaml": "^3.12.6",
     "@types/request-promise": "^4.1.45",
+    "got": "^11.8.2",
+    "js-yaml": "^3.13.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
-    "js-yaml": "^3.13.1",
     "ws": "^7.4.6"
   },
   "devDependencies": {

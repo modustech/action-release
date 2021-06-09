@@ -1,4 +1,4 @@
-import {get, post, patch} from 'request-promise'
+import got from 'got'
 import * as yaml from 'js-yaml'
 import * as core from '@actions/core'
 
@@ -35,32 +35,51 @@ export class Committer {
 
     async getChartYaml(): Promise<string> {
         // get ref
-        let res = await get({
-            uri: `https://api.github.com/repos/${this.owner}/${this.repo}/git/refs/heads/${this.branch}`,
-            headers: this.headers,
-            json: true
-        })
-        let {url} = res.object
+        let response = await got.get(
+            `https://api.github.com/repos/${this.owner}/${this.repo}/git/refs/heads/${this.branch}`,
+            {
+                headers: this.headers,
+                responseType: 'json'
+            }
+        )
+        let res: any = response.body
+        let {url} = res
         core.debug(url)
 
         // get commit
-        res = await get({url, headers: this.headers, json: true})
+        response = await got.get(url, {
+            headers: this.headers,
+            responseType: 'json'
+        })
+        res = response.body
         core.debug(res.tree.url)
         url = res.tree.url
         this.baseTree = res.tree.sha
         this.parentCommit = res.sha
 
         // get tree
-        res = await get({url, headers: this.headers, json: true})
+        response = await got.get(url, {
+            headers: this.headers,
+            responseType: 'json'
+        })
         // find the file
+        res = response.body
         let file = res.tree.find((v: any) => v.path === 'environment')
         url = file.url
         core.debug(url)
-        res = await get({url, headers: this.headers, json: true})
+        response = await got.get(url, {
+            headers: this.headers,
+            responseType: 'json'
+        })
+        res = response.body
         file = res.tree.find((v: any) => v.path === 'Chart.yaml')
         url = file.url
         core.debug(url)
-        res = await get({url, headers: this.headers, json: true})
+        response = await got.get(url, {
+            headers: this.headers,
+            responseType: 'json'
+        })
+        res = response.body
         return Buffer.from(res.content, 'base64').toString('utf-8')
     }
 
@@ -89,12 +108,12 @@ export class Committer {
             content,
             encoding: 'utf-8'
         }
-        let res = await post({
-            url,
+        let response = await got.post(url, {
             headers: this.headers,
             body,
-            json: true
+            responseType: 'json'
         })
+        let res: any = response.body
         core.debug(res)
         const blobSha = res.sha
 
@@ -113,7 +132,12 @@ export class Committer {
                 }
             ]
         }
-        res = await post({url, headers: this.headers, body, json: true})
+        response = await got.post(url, {
+            headers: this.headers,
+            body,
+            responseType: 'json'
+        })
+        res = response.body
         core.debug('created tree')
         core.debug(res)
         const treeSha = res.sha
@@ -131,7 +155,12 @@ export class Committer {
             parents: [this.parentCommit],
             tree: treeSha
         }
-        res = await post({url, headers: this.headers, body, json: true})
+        response = await got.post(url, {
+            headers: this.headers,
+            body,
+            responseType: 'json'
+        })
+        res = response.body
         core.debug('created commit')
         core.debug(res)
 
@@ -142,12 +171,12 @@ export class Committer {
             sha: res.sha,
             force: false
         }
-        res = await patch({
-            url,
+        response = await got.patch(url, {
             headers: this.headers,
             body,
-            json: true
+            responseType: 'json'
         })
+        res = response.body
         core.debug('created ref')
         core.debug(res)
     }
