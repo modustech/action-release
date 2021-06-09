@@ -2,6 +2,9 @@ name: 'Deploy Service'
 description: 'Make a commit to environment repo and release a microservice via Helm'
 author: 'Modus Technologies'
 inputs:
+  token:
+    description: 'authentication token'
+    required: true
   owner:
     description: 'the owner of the github repo, organization or account name'
     required: true
