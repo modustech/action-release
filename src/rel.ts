@@ -61,8 +61,7 @@ export class Committer {
         url = file.url
         core.debug(url)
         res = await get({url, headers: this.headers, json: true})
-        const content = Buffer.from(res.content, 'base64').toString('utf-8')
-        return content
+        return Buffer.from(res.content, 'base64').toString('utf-8')
     }
 
     updateChart(chart: Chart): void {
@@ -155,7 +154,7 @@ export class Committer {
 
     async release(): Promise<void> {
         let content = await this.getChartYaml()
-        const chart = yaml.safeLoad(content)
+        const chart = yaml.safeLoad(content) as Chart
         this.updateChart(chart)
         content = yaml.safeDump(chart)
         await this.commitChange(content)
