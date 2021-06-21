@@ -1,4 +1,4 @@
-import * as got from 'got'
+import got from 'got'
 import * as yaml from 'js-yaml'
 import * as core from '@actions/core'
 
