@@ -94,6 +94,13 @@ typings/
 .DS_Store
 Thumbs.db
 
+# Editors
+.idea
+*.iml
+
+# local node version
+.node-version
+
 # Ignore built ts files
 __tests__/runner/*
 lib/**/*

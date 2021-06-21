@@ -1,6 +1,6 @@
 import got from 'got'
-import yaml from 'js-yaml'
-import core from '@actions/core'
+import * as yaml from 'js-yaml'
+import * as core from '@actions/core'
 
 interface Service {
     version: string
@@ -66,6 +66,7 @@ export class Committer {
             responseType: 'json'
         })
         // find the file
+        res = response.body
         let file = res.tree.find((v: any) => v.path === 'environment')
         url = file.url
         core.debug(url)
